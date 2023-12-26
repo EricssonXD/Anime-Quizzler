@@ -1,8 +1,8 @@
-import {Command} from "./Command";
-import {ChatInputCommandInteraction, escapeMarkdown, GuildMember, SlashCommandBuilder} from "discord.js";
-import {TrackInfo} from "../music/TrackInfo";
-import {Bot} from "../Bot";
-import {SlashCommandStringOption} from "@discordjs/builders";
+import { Command } from "../CommandManager";
+import { ChatInputCommandInteraction, escapeMarkdown, GuildMember, SlashCommandBuilder } from "discord.js";
+import { TrackInfo } from "../music/TrackInfo";
+import { Bot } from "../Bot";
+import { SlashCommandStringOption } from "@discordjs/builders";
 
 function toArray(trackInfo: TrackInfo | TrackInfo[]): TrackInfo[] {
   if (Array.isArray(trackInfo)) {
@@ -61,12 +61,12 @@ export const PLAY_COMMANDS: Command[] = [
               name: "now",
               value: "now"
             }, {
-              name: "next",
-              value: "next"
-            }, {
-              name: "queue",
-              value: "queue"
-            }
+            name: "next",
+            value: "next"
+          }, {
+            name: "queue",
+            value: "queue"
+          }
           )
       ),
     async execute(interaction, bot) {

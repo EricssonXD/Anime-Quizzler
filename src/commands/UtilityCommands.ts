@@ -1,7 +1,7 @@
-import {Command} from "./Command";
-import {GuildMember, SlashCommandBuilder, ChannelType} from "discord.js";
+import { Command } from "../CommandManager";
+import { GuildMember, SlashCommandBuilder, ChannelType } from "discord.js";
 
-export const COMMANDS: Command[] = [
+export const UTILITY_COMMANDS: Command[] = [
   {
     data: new SlashCommandBuilder()
       .setName("join")

@@ -1,4 +1,4 @@
-import { Command } from "./Command";
+import { Command } from "../CommandManager";
 import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
 import { Bot } from "../Bot";
 import { GuildMusicManager } from "../music/GuildMusicManager";

@@ -10,7 +10,7 @@ import {
 } from "discord.js";
 import { GuildInfo } from "./music/GuildInfo";
 import { GuildMusicManager } from "./music/GuildMusicManager";
-import { CommandManager } from "./commands/Command";
+import { CommandManager } from "./CommandManager";
 
 export class Bot {
   private commandManger: CommandManager;

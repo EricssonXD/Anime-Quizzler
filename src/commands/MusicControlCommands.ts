@@ -1,7 +1,7 @@
-import {Command} from "./Command";
-import {ChatInputCommandInteraction, GuildMember, SlashCommandBuilder} from "discord.js";
-import {Bot} from "../Bot";
-import {GuildMusicManager} from "../music/GuildMusicManager";
+import { Command } from "../CommandManager";
+import { ChatInputCommandInteraction, GuildMember, SlashCommandBuilder } from "discord.js";
+import { Bot } from "../Bot";
+import { GuildMusicManager } from "../music/GuildMusicManager";
 
 function tryJoin(interaction: ChatInputCommandInteraction, bot: Bot) {
   bot.getGuildMusicManager(interaction.guild).tryJoin((interaction.member as GuildMember).voice.channel);

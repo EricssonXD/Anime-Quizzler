@@ -1,5 +1,5 @@
-import {Command} from "./Command";
-import {SlashCommandBuilder} from "discord.js";
+import { Command } from "../CommandManager";
+import { SlashCommandBuilder } from "discord.js";
 
 export const PLAYLIST_CONTROL_COMMANDS: Command[] = [
   {
