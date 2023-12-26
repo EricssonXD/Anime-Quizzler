@@ -1,4 +1,4 @@
-import { CacheType, ChatInputCommandInteraction, REST, Routes, SlashCommandBuilder, TextInputStyle } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, Client, REST, Routes, SlashCommandBuilder, TextInputStyle } from "discord.js";
 import { SharedNameAndDescription } from "@discordjs/builders";
 import { RESTPostAPIChatInputApplicationCommandsJSONBody } from "discord-api-types/v10";
 import { Bot } from "./Bot";
@@ -24,6 +24,8 @@ export interface Command {
 
 
 export class CommandManager {
+  // private readonly commands = new Map<string, Command>();
+
 
   static RELOAD_COMMAND: Command = {
     data: new SlashCommandBuilder()
@@ -40,17 +42,19 @@ export class CommandManager {
           delete require.cache[require.resolve(filePath)];
           const commandFile = await import(filePath)
           // const commandFile = require(filePath);
+          console.log(`Reloading ${file}.`);
           for (const key in commandFile) {
-            if (isCommandArray(commandFile[key])) {
+            // console.log(`Yo found ${key}.`);
+            // console.log(`Yo found ${typeof commandFile[key]}.`);
+            // if (isCommandArray(commandFile[key])) {
+            if (key.endsWith("COMMANDS")) {
+              console.log(`Reloading ${key}.`);
               for (const command of commandFile[key]) {
-                if ('data' in command && 'execute' in command) {
-                  this.commands.delete(command.data.name);
-                  this.commands.set(command.data.name, command);
-                } else {
-                  console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
-                }
-              }
+                console.log(`Reloading command ${command.data.name}.`);
+                bot.client.commands.delete(command.data.name);
+                bot.client.commands.set(command.data.name, command);
 
+              }
             }
           }
 
@@ -67,12 +71,11 @@ export class CommandManager {
   }
 
   private static readonly COMMANDS: Command[] = [this.RELOAD_COMMAND, ...UTILITY_COMMANDS, ...PLAY_COMMANDS, ...MUSIC_CONTROL_COMMANDS, ...PLAYLIST_CONTROL_COMMANDS, ...ANIME_QUIZ_COMMANDS];
-  private readonly commands = new Map<string, Command>();
 
 
-  constructor(private token: string) {
+  constructor(private token: string, private client: Client) {
     for (const command of CommandManager.COMMANDS) {
-      this.commands.set(command.data.name, command);
+      this.client.commands.set(command.data.name, command);
     }
   }
 
@@ -81,8 +84,8 @@ export class CommandManager {
   }
 
   private getCommand(command: string): Command {
-    if (this.commands.has(command)) {
-      return this.commands.get(command);
+    if (this.client.commands.has(command)) {
+      return this.client.commands.get(command);
     } else {
       throw new Error("Unknown command.");
     }
@@ -102,10 +105,6 @@ export class CommandManager {
       console.error(error);
     }
   }
-
-
-
-
 }
 
 function isCommandArray(obj: any): obj is Command[] {

@@ -1,6 +1,7 @@
 import {
   ChatInputCommandInteraction,
   Client,
+  Collection,
   Events,
   GatewayIntentBits,
   Guild,
@@ -10,7 +11,16 @@ import {
 } from "discord.js";
 import { GuildInfo } from "./music/GuildInfo";
 import { GuildMusicManager } from "./music/GuildMusicManager";
-import { CommandManager } from "./CommandManager";
+import { Command, CommandManager } from "./CommandManager";
+
+
+declare module "discord.js" {
+  interface Client {
+    commands: Collection<String, Command>;
+  }
+}
+
+
 
 export class Bot {
   private commandManger: CommandManager;
@@ -38,7 +48,9 @@ export class Bot {
 
   public start(token: string) {
     this.client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildVoiceStates, GatewayIntentBits.GuildPresences, GatewayIntentBits.GuildMessages, GatewayIntentBits.GuildMessageReactions, GatewayIntentBits.MessageContent] });
-    this.commandManger = new CommandManager(token);
+    this.client.commands = new Collection();
+
+    this.commandManger = new CommandManager(token, this.client);
     this.client.login(token).then(() => {
       console.log("Logged in");
       this.listenToInteractions();
