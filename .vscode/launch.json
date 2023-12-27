@@ -6,6 +6,12 @@
     "configurations": [
         {
             "command": "npm run dev",
+            "name": "Debug Bot",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            "command": "npm run devServer",
             "name": "Debug Server",
             "request": "launch",
             "type": "node-terminal"

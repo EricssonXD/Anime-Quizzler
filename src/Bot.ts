@@ -14,6 +14,7 @@ import { GuildMusicManager } from "./music/GuildMusicManager";
 import { Command, CommandManager } from "./CommandManager";
 
 
+// Extend Client to add commands property
 declare module "discord.js" {
   interface Client {
     commands: Collection<String, Command>;
@@ -23,7 +24,7 @@ declare module "discord.js" {
 
 
 export class Bot {
-  private commandManger: CommandManager;
+  public commandManger: CommandManager;
 
   public static getInstance(): Bot {
     if (!this.bot) {

@@ -1,0 +1,13 @@
+{
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": ".*\\\\src\\\\commands\\\\.*\\.ts$",
+                "isAsync": true,
+                "cmd": "curl -X POST http://localhost:3000/post/reload/abc/${env:OWNER}"
+                // "cmd": "Invoke-WebRequest -UseBasicParsing http: //localhost:3000/post/reload/abc/${env:OWNER} -Method POST",
+
+            },
+        ]
+    }
+}

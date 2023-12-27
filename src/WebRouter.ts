@@ -1,6 +1,6 @@
-import express, {NextFunction, Response, Router} from "express";
-import {Bot} from "./Bot";
-import {YoutubeService} from "./music/YoutubeService";
+import express, { NextFunction, Response, Router } from "express";
+import { Bot } from "./Bot";
+import { YoutubeService } from "./music/YoutubeService";
 
 export class WebRouter {
 
@@ -13,6 +13,13 @@ export class WebRouter {
   }
 
   public setup(): Router {
+    this.router.post("/post/reload/:type/:auth", (req: any, res: any, next: any) => {
+      if (req.params.auth !== process.env.OWNER) {
+        res.status(401).send({ status: 401, message: "Unauthorized" });
+        return;
+      }
+      this.handleResponse(this.bot.commandManger.reloadCommands(), res);
+    });
     this.router.get("/:guildId/queue/:url", (req: any, res: any, next: any) => {
       this.handleResponse(this.bot.getGuildMusicManagerByIdIfExists(req.params.guildId)
         .queue(req.params.url), res);
@@ -151,18 +158,18 @@ export class WebRouter {
         promise();
         this.ok(res);
       } catch
-        (e) {
+      (e) {
         this.error(e, res);
       }
     }
   }
 
   private ok(res: Response) {
-    res.status(200).send({status: 200, message: "OK"});
+    res.status(200).send({ status: 200, message: "OK" });
   }
 
   private error(err: any, res: Response) {
     console.error(err);
-    res.status(500).send({status: 500, message: err.message});
+    res.status(500).send({ status: 500, message: err.message });
   }
 }

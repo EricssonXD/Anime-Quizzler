@@ -10,6 +10,7 @@
     "start": "node ./bin/www",
     "serve": "nodemon",
     "dev": "nodemon --watch 'src/*' -e ts,tsx --exec ts-node ./src/app.ts",
+    "devServer": "nodemon --watch 'src/*' -e ts,tsx --exec ts-node ./bin/server_only.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {

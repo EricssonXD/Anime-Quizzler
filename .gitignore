@@ -10,3 +10,5 @@ youtube-api.txt
 .env
 .env.replit
 todo.md
+.vscode/tasks.json
+.vscode/settings.json

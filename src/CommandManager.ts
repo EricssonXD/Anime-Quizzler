@@ -1,4 +1,4 @@
-import { CacheType, ChatInputCommandInteraction, Client, REST, Routes, SlashCommandBuilder, TextInputStyle } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, Client, REST, Routes, SlashCommandBuilder, TextInputStyle, PermissionFlagsBits } from "discord.js";
 import { SharedNameAndDescription } from "@discordjs/builders";
 import { RESTPostAPIChatInputApplicationCommandsJSONBody } from "discord-api-types/v10";
 import { Bot } from "./Bot";
@@ -30,43 +30,13 @@ export class CommandManager {
   static RELOAD_COMMAND: Command = {
     data: new SlashCommandBuilder()
       .setName("reload")
-      .setDescription("Reload all commands."),
+      .setDescription("Reload all commands.")
+      .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+
     async execute(interaction, bot) {
       console.log(`Reloading commands for guild ${interaction.guildId}.`);
-      try {
-        const foldersPath = path.join(__dirname, 'commands');
-        const commandFiles = fs.readdirSync(foldersPath);
 
-        for (const file of commandFiles) {
-          const filePath = path.join(foldersPath, file);
-          delete require.cache[require.resolve(filePath)];
-          const commandFile = await import(filePath)
-          // const commandFile = require(filePath);
-          console.log(`Reloading ${file}.`);
-          for (const key in commandFile) {
-            // console.log(`Yo found ${key}.`);
-            // console.log(`Yo found ${typeof commandFile[key]}.`);
-            // if (isCommandArray(commandFile[key])) {
-            if (key.endsWith("COMMANDS")) {
-              console.log(`Reloading ${key}.`);
-              for (const command of commandFile[key]) {
-                console.log(`Reloading command ${command.data.name}.`);
-                bot.client.commands.delete(command.data.name);
-                bot.client.commands.set(command.data.name, command);
-
-              }
-            }
-          }
-
-        }
-
-
-        console.log(`Successfully reloaded ${69} commands.`);
-      } catch (error) {
-        return `There was an error while reloading a command:\n\`${error.message}\``;
-        console.error(error);
-      }
-      return "Commands Reloaded";
+      return bot.commandManger.reloadCommands();
     }
   }
 
@@ -104,6 +74,41 @@ export class CommandManager {
     } catch (error) {
       console.error(error);
     }
+  }
+
+
+  public async reloadCommands(): Promise<string> {
+    try {
+      const foldersPath = path.join(__dirname, 'commands');
+      const commandFiles = fs.readdirSync(foldersPath);
+
+      for (const file of commandFiles) {
+        const filePath = path.join(foldersPath, file);
+        delete require.cache[require.resolve(filePath)];
+        const commandFile = await import(filePath)
+        // const commandFile = require(filePath);
+        console.log(`Reloading ${file}.`);
+        for (const key in commandFile) {
+          // console.log(`Yo found ${key}.`);
+          // console.log(`Yo found ${typeof commandFile[key]}.`);
+          // if (isCommandArray(commandFile[key])) {
+          if (key.endsWith("COMMANDS")) {
+            console.log(`Reloading ${key}.`);
+            for (const command of commandFile[key]) {
+              console.log(`Reloading command ${command.data.name}.`);
+              this.client.commands.delete(command.data.name);
+              this.client.commands.set(command.data.name, command);
+
+            }
+          }
+        }
+      }
+      console.log(`Successfully reloaded ${69} commands.`);
+    } catch (error) {
+      console.error(error);
+      return `There was an error while reloading a command:\n\`${error.message}\``;
+    }
+    return "Commands Reloaded";
   }
 }
 
