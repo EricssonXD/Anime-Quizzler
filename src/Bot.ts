@@ -12,6 +12,7 @@ import {
 import { GuildInfo } from "./music/GuildInfo";
 import { GuildMusicManager } from "./music/GuildMusicManager";
 import { Command, CommandManager } from "./CommandManager";
+import { QuizGameManager } from "./anime_quiz/QuizGameManager";
 
 
 // Extend Client to add commands property
@@ -42,6 +43,7 @@ export class Bot {
   private static bot: Bot;
   public client: Client;
   private musicManagers = new Map<Snowflake, GuildMusicManager>();
+  private quizGameManager = new Map<Snowflake, QuizGameManager>();
 
   private constructor(private ownerId: string) {
 
@@ -154,6 +156,34 @@ export class Bot {
   public getGuildMusicManagerByIdIfExists(guildId: Snowflake): GuildMusicManager {
     if (this.musicManagers.has(guildId)) {
       return this.musicManagers.get(guildId);
+    } else {
+      throw new Error(`Guild with id: '${guildId}' not available.`);
+    }
+  }
+
+
+
+  public getGuildQuizGameManager(guild: Guild): QuizGameManager {
+    if (this.quizGameManager.has(guild.id)) {
+      return this.quizGameManager.get(guild.id);
+    }
+    const quizGameManager = new QuizGameManager(guild);
+    this.quizGameManager.set(guild.id, quizGameManager);
+    return quizGameManager;
+  }
+
+  public getGuildQuizGameManagerById(guildId: Snowflake): QuizGameManager {
+    const guild = this.client.guilds.resolve(guildId);
+    if (guild) {
+      return this.getGuildQuizGameManager(guild);
+    } else {
+      throw new Error(`Guild with id: '${guildId}' not available.`);
+    }
+  }
+
+  public getGuildQuizGameManagerByIdIfExists(guildId: Snowflake): QuizGameManager {
+    if (this.quizGameManager.has(guildId)) {
+      return this.quizGameManager.get(guildId);
     } else {
       throw new Error(`Guild with id: '${guildId}' not available.`);
     }

@@ -1,4 +1,4 @@
-class QuizGameSettings {
+export class QuizGameSettings {
     private difficulty: string;
     private category: string;
     private numberOfQuestions: number;

@@ -7,20 +7,26 @@ import { GuildMusicManager } from "../music/GuildMusicManager";
 export const ANIME_QUIZ_COMMANDS: Command[] = [
     {
         data: new SlashCommandBuilder()
-            .setName("test")
-            .setDescription("Pauses the song."),
+            .setName("quizgame")
+            .setDescription("Host a quiz game")
+            .addStringOption(option =>
+                option.setName("mode")
+                    .setDescription("The mode of quiz game to host")
+                    .setRequired(true)
+                    .addChoices(
+                        { name: 'Discord', value: 'discord' },
+                        { name: 'Web', value: 'web' },
+                    )
+            ),
         execute(interaction, bot) {
-            bot.getGuildMusicManager(interaction.guild).pause();
+            const gameMode = interaction.options.getString('mode');
+            if (gameMode === 'discord') {
+                bot.getGuildQuizGameManager(interaction.guild).hostQuizGameDiscord();
+            } else if (gameMode === 'web') {
+                bot.getGuildQuizGameManager(interaction.guild).hostQuizGameWeb();
+            }
             return "Paused.";
         }
     },
-    {
-        data: new SlashCommandBuilder()
-            .setName("test2")
-            .setDescription("Display music control panel."),
-        execute(interaction, bot) {
-            bot.getGuildMusicManager(interaction.guild).displayMusicPanel(interaction.channel);
-            return "Displaying music panel.";
-        }
-    },
+
 ];
