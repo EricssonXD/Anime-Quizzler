@@ -11,6 +11,7 @@ import { PLAY_COMMANDS } from "./commands/PlayCommands";
 import { MUSIC_CONTROL_COMMANDS } from "./commands/MusicControlCommands";
 import { PLAYLIST_CONTROL_COMMANDS } from "./commands/PlayListControlCommands";
 import { ANIME_QUIZ_COMMANDS } from "./commands/AnimeQuizCommand";
+import { DEVELOPER_COMMANDS } from "./commands/DeveloperCommands";
 
 export type CommandExecutable = (interaction: ChatInputCommandInteraction, bot: Bot) => string | void | Promise<string | void>;
 export type CommandBuilder = SharedNameAndDescription & { toJSON(): RESTPostAPIChatInputApplicationCommandsJSONBody };
@@ -19,6 +20,7 @@ export interface Command {
   data: CommandBuilder;
   execute: CommandExecutable;
   type?: 'DiscordCommand';
+  autoReply?: boolean;
 }
 
 
@@ -35,12 +37,11 @@ export class CommandManager {
 
     async execute(interaction, bot) {
       console.log(`Reloading commands for guild ${interaction.guildId}.`);
-
       return bot.commandManger.reloadCommands();
     }
   }
 
-  private static readonly COMMANDS: Command[] = [this.RELOAD_COMMAND, ...UTILITY_COMMANDS, ...PLAY_COMMANDS, ...MUSIC_CONTROL_COMMANDS, ...PLAYLIST_CONTROL_COMMANDS, ...ANIME_QUIZ_COMMANDS];
+  private static readonly COMMANDS: Command[] = [this.RELOAD_COMMAND, ...UTILITY_COMMANDS, ...PLAY_COMMANDS, ...MUSIC_CONTROL_COMMANDS, ...PLAYLIST_CONTROL_COMMANDS, ...ANIME_QUIZ_COMMANDS, ...DEVELOPER_COMMANDS];
 
 
   constructor(private token: string, private client: Client) {
@@ -51,6 +52,10 @@ export class CommandManager {
 
   public execute(interaction: ChatInputCommandInteraction, bot: Bot) {
     return this.getCommand(interaction.commandName).execute(interaction, bot);
+  }
+
+  public checkReplyRequired(interaction: ChatInputCommandInteraction): boolean {
+    return !(this.getCommand(interaction.commandName).autoReply === false)
   }
 
   private getCommand(command: string): Command {

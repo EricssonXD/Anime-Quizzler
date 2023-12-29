@@ -1,15 +1,26 @@
 export class QuizGameSettings {
-    private difficulty: string;
-    private category: string;
     private numberOfQuestions: number;
+    private scoringType: GameScoringType;
 
-    constructor(difficulty: string, category: string, numberOfQuestions: number) {
-        this.difficulty = difficulty;
-        this.category = category;
-        this.numberOfQuestions = numberOfQuestions;
+
+    constructor(settings?: QuizGameSettingsInterface) {
+        this.numberOfQuestions = settings.numberOfQuestions ?? 30;
+        this.scoringType = settings.scoringType ?? GameScoringType.points;
     }
 
-    // Add getters and setters for the properties if needed
+    public set(settings: QuizGameSettingsInterface) {
+        this.numberOfQuestions = settings.numberOfQuestions ?? this.numberOfQuestions;
+        this.scoringType = settings.scoringType ?? this.scoringType;
+    }
+}
 
-    // Add any additional methods or properties as per your requirements
+export interface QuizGameSettingsInterface {
+    numberOfQuestions?: number,
+    scoringType?: GameScoringType
+}
+
+enum GameScoringType {
+    quickdraw = "quickdraw",
+    lives = "lives",
+    points = "points"
 }

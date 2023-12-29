@@ -10,6 +10,12 @@ export class QuizGameManagerDiscord extends QuizGamePlatform {
 
     }
 
+    private initializeQuizGame() {
+        // Initialize songs
+
+    }
+
+
     public showQuestionOptionPannel() {
         // Show the question options
 

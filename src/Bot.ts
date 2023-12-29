@@ -12,7 +12,10 @@ import {
 import { GuildInfo } from "./music/GuildInfo";
 import { GuildMusicManager } from "./music/GuildMusicManager";
 import { Command, CommandManager } from "./CommandManager";
+
 import { QuizGameManager } from "./anime_quiz/QuizGameManager";
+import path from "path";
+import fs from 'node:fs';
 
 
 // Extend Client to add commands property
@@ -105,7 +108,7 @@ export class Bot {
       console.log(`Discord interaction: \"${interaction.type}\" from user: ${interaction.user.id}`);
       try {
         if (interaction.isChatInputCommand()) {
-          await interaction.deferReply({ ephemeral: true });
+          if (this.commandManger.checkReplyRequired(interaction)) await interaction.deferReply({ ephemeral: true });
           await this.handleChatInputCommand(interaction);
         }
       } catch (err) {
@@ -128,6 +131,7 @@ export class Bot {
     if (response instanceof Promise) {
       response = await response;
     }
+    if (!this.commandManger.checkReplyRequired(interaction)) return;
     if (typeof response === "string") {
       await interaction.editReply(response);
     } else {
@@ -207,6 +211,42 @@ export class Bot {
   private closeMusicManagers() {
     for (const musicManager of this.musicManagers.values()) {
       musicManager.close();
+    }
+  }
+
+  public async reloadQuizManager() {
+    try {
+      const foldersPath = path.join(__dirname, 'anime_quiz');
+      const targetFiles = fs.readdirSync(foldersPath);
+      for (const file of targetFiles) {
+        const filePath = path.join(foldersPath, file);
+        if (!filePath.endsWith(".ts")) {
+          const subfiles = fs.readdirSync(filePath);
+          for (const subfile of subfiles) {
+            const subfilePath = path.join(filePath, subfile);
+            this.reloadFile(subfilePath);
+
+          }
+          continue;
+        }
+        this.reloadFile(filePath);
+        this.quizGameManager.clear()
+      }
+      console.log(`Successfully reloaded all Quizzler Files`);
+    } catch (error) {
+      console.error(error);
+      return `There was an error while reloading a command:\n\`${error.message}\``;
+    }
+    return "AnimeQuiz Reloaded";
+  }
+
+  private async reloadFile(filePath: string) {
+    try {
+      delete require.cache[require.resolve(filePath)];
+      await import(filePath)
+
+    } catch (error) {
+      console.error(error);
     }
   }
 }

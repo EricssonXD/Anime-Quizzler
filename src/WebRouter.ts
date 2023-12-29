@@ -18,7 +18,16 @@ export class WebRouter {
         res.status(401).send({ status: 401, message: "Unauthorized" });
         return;
       }
-      this.handleResponse(this.bot.commandManger.reloadCommands(), res);
+
+      switch (req.params.type) {
+        case "allcommands":
+          this.handleResponse(this.bot.commandManger.reloadCommands(), res);
+          break;
+        case "quizzler":
+          this.handleResponse(this.bot.reloadQuizManager(), res);
+          break;
+      }
+
     });
     this.router.get("/:guildId/queue/:url", (req: any, res: any, next: any) => {
       this.handleResponse(this.bot.getGuildMusicManagerByIdIfExists(req.params.guildId)
