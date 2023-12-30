@@ -1,5 +1,5 @@
 import { Command } from "../CommandManager";
-import { ActionRowBuilder, ChatInputCommandInteraction, ComponentType, GuildMember, MessageActionRowComponentBuilder, SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, createComponent, createComponentBuilder } from "discord.js";
+import { ActionRowBuilder, ChannelType, ChatInputCommandInteraction, ComponentType, GuildMember, MessageActionRowComponentBuilder, SlashCommandBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, TextChannel, createComponent, createComponentBuilder } from "discord.js";
 
 
 export const DEVELOPER_COMMANDS: Command[] = [
@@ -12,6 +12,17 @@ export const DEVELOPER_COMMANDS: Command[] = [
                 bot.commandManger.registerCommands(interaction.guildId, bot.client.user.id);
             }
             return "Registered Commands.";
+        }
+    },
+    {
+        data: new SlashCommandBuilder()
+            .setName("question")
+            .setDescription("Ask ultimate ai a question.")
+            .addStringOption(option => option.setName("question").setDescription("Question to ask.").setRequired(true))
+        ,
+        execute(interaction, bot) {
+
+            return "True";
         }
     },
     {
@@ -29,8 +40,20 @@ export const DEVELOPER_COMMANDS: Command[] = [
         data: new SlashCommandBuilder()
             .setName("test2")
             .setDescription("Display music control panel."),
-        execute(interaction, bot) {
-            return "Displaying music panel.";
+        async execute(interaction, bot) {
+            const channel = interaction.channel;
+            if (channel instanceof TextChannel) {
+                const thread = await channel.threads.create({
+                    type: ChannelType.PrivateThread,
+                    name: 'food-talk',
+                    autoArchiveDuration: 60,
+                    reason: 'Needed a separate thread for food',
+                });
+
+                console.log(`Created thread: ${thread.name}`);
+            } else {
+                interaction.reply('This channel is not a text channel');
+            }
         }
     },
     {

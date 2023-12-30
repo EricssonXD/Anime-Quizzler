@@ -1,6 +1,6 @@
 export class QuizGameSettings {
-    private numberOfQuestions: number;
-    private scoringType: GameScoringType;
+    public numberOfQuestions: number;
+    public scoringType: GameScoringType;
 
 
     constructor(settings?: QuizGameSettingsInterface) {
@@ -19,7 +19,7 @@ export interface QuizGameSettingsInterface {
     scoringType?: GameScoringType
 }
 
-enum GameScoringType {
+export enum GameScoringType {
     quickdraw = "quickdraw",
     lives = "lives",
     points = "points"

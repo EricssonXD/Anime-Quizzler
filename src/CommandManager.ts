@@ -72,7 +72,7 @@ export class CommandManager {
     try {
       const data = await rest.put(
         Routes.applicationGuildCommands(botUserId, guildId),
-        { body: CommandManager.COMMANDS.map(command => command.data.toJSON()) },
+        { body: this.client.commands.map(command => command.data.toJSON()) },
       ) as any;
 
       console.log(`Successfully registered ${data.length} commands.`);
@@ -103,7 +103,6 @@ export class CommandManager {
               console.log(`Reloading command ${command.data.name}.`);
               this.client.commands.delete(command.data.name);
               this.client.commands.set(command.data.name, command);
-
             }
           }
         }

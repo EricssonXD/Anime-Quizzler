@@ -12,24 +12,32 @@ export class QuizGameManager {
 
     public gameSettings: QuizGameSettings = new QuizGameSettings();
 
+    public players: string[] = [];
+
+    public host: string | null = null;
+
     constructor(public guild: Guild) {
 
     }
 
     public hostQuizGameDiscord(interaction: ChatInputCommandInteraction) {
-        if (this.activeGameManager === null) {
+        this.hostGame(interaction, () => {
             console.log("Start Hosting Discord Quiz Game");
             this.activeGameManager = new QuizGameManagerDiscord(interaction.user.id, this);
-        } else {
-            console.log("Already hosting a game.");
-        }
+        });
     }
 
     public hostQuizGameWeb(interaction: ChatInputCommandInteraction) {
-        console.log(this.activeGameManager);
-        if (this.activeGameManager === null) {
+        this.hostGame(interaction, () => {
             console.log("Start Hosting Web Quiz Game");
             this.activeGameManager = new QuizGameManagerWeb(interaction.user.id, this);
+        });
+    }
+
+    private hostGame(interaction: ChatInputCommandInteraction, callback: () => void) {
+        if (this.activeGameManager === null) {
+            interaction.reply({ content: "Hosted a quiz game.", ephemeral: true });
+            callback();
         } else {
             console.log("Already hosting a game.");
         }
